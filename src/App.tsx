@@ -12,6 +12,9 @@ function App() {
             New Product
           </button>
         </div>
+        <div>
+          <ProductList />
+        </div>
       </div>
     </>
   );
