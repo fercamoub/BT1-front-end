@@ -1,12 +1,17 @@
+import React from "react";
+import type { Product } from "../../types";
+import { TableBody, TableRow, TableCell } from "@mui/material";
+import EnhancedTableRow from "./TableRow";
+
 interface TableBodyProps {
   visibleProducts: Product[];
-  selected: readonly string[];
-  onRowClick: (event: React.MouseEvent<unknown>, id: string) => void;
+  selected: readonly number[];
+  onRowClick: (event: React.MouseEvent<unknown>, id: number) => void;
   emptyRows: number;
   dense: boolean;
 }
 
-function EnhancedTableBody({
+export default function EnhancedTableBody({
   visibleProducts,
   selected,
   onRowClick,

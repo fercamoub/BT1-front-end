@@ -1,3 +1,5 @@
+import TablePagination from "@mui/material/TablePagination";
+
 interface PaginationProps {
   count: number;
   rowsPerPage: number;

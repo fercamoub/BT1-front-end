@@ -1,11 +1,15 @@
+import type { Product } from "../../types";
+import { TableRow, TableCell, Checkbox } from "@mui/material";
+import { formatPrice, formatDate } from "../utils/formatters";
+
 interface TableRowProps {
   product: Product;
   index: number;
   isItemSelected: boolean;
-  onRowClick: (event: React.MouseEvent<unknown>, id: string) => void;
+  onRowClick: (event: React.MouseEvent<unknown>, id: number) => void;
 }
 
-function EnhancedTableRow({
+export default function EnhancedTableRow({
   product,
   index,
   isItemSelected,

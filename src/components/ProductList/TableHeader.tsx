@@ -6,7 +6,8 @@ import Checkbox from "@mui/material/Checkbox";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Box from "@mui/material/Box";
 import { visuallyHidden } from "@mui/utils";
-import { EnhancedTableProps, Product, headCells } from "../types";
+import type { EnhancedTableProps, Product } from "../../types";
+import { headCells } from "./tableConfig";
 
 export default function EnhancedTableHead(props: EnhancedTableProps) {
   const {

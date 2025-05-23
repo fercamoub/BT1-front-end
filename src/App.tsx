@@ -1,3 +1,4 @@
+import ProductList from "./components/ProductList";
 import Search from "./components/Search";
 
 function App() {

@@ -1,11 +1,18 @@
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableContainer from "@mui/material/TableContainer";
 import useTableLogic from "../hooks/TableHooks";
 import EnhancedTableHead from "./ProductList/TableHeader";
 import EnhancedTableBody from "./ProductList/TableBody";
 import EnhancedTablePagination from "./ProductList/Pagination";
 import EnhancedTableToolbar from "./ProductList/Toolbar";
 import DensePaddingControl from "./ProductList/DensePadding";
+import { mockProducts } from "./ProductList/tableConfig";
 
 export default function ProductList() {
+  const products = mockProducts;
+
   const {
     order,
     orderBy,
