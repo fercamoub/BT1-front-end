@@ -1,22 +1,55 @@
 import React from "react";
-import type { Order, Product } from "../types";
+import type { Order, Product, ProductForm } from "../types";
 import {
-  mockProducts,
-  getComparator,
-} from "../components/ProductList/tableConfig";
+  fetchProducts,
+  deleteProduct,
+  updateProduct,
+  createProduct,
+} from "../api/products";
+import { getComparator } from "../components/ProductList/tableConfig";
 
 export default function useTableLogic() {
-  const products = mockProducts;
-
+  const [products, setProducts] = React.useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  //MUI Default hooks
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Product>("name");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  //Modal hooks
+  const [editModalOpen, setEditModalOpen] = React.useState(false);
+  const [createModalOpen, setCreateModalOpen] = React.useState(false);
+  const [productToEdit, setProductToEdit] = React.useState<Product | null>(
+    null
+  );
 
+  //API implementation
+  React.useEffect(() => {
+    loadProducts();
+  }, []);
+  const loadProducts = async () => {
+    try {
+      const fetchedProducts = await fetchProducts();
+      setProducts(fetchedProducts);
+    } catch (err) {
+      console.error("Error loading products:", err);
+    }
+  };
+
+  // Search functionality
+  const filteredProducts = React.useMemo(() => {
+    return products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [products, searchTerm]);
+
+  // MUI sorting and pagination logic
   const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
+    _event: React.MouseEvent<unknown>,
     property: keyof Product
   ) => {
     const isAsc = orderBy === property && order === "asc";
@@ -33,7 +66,7 @@ export default function useTableLogic() {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+  const handleClick = (_event: React.MouseEvent<unknown>, id: number) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly number[] = [];
 
@@ -52,7 +85,7 @@ export default function useTableLogic() {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -67,18 +100,131 @@ export default function useTableLogic() {
     setDense(event.target.checked);
   };
 
+  // Search handler
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setPage(0); // Reset to first page when searching
+  };
+
+  //Modal handlers
+  const handleCreate = async (productForm: ProductForm) => {
+    try {
+      const newProduct = await createProduct(productForm);
+      setProducts((prevProducts) => [...prevProducts, newProduct]);
+      setCreateModalOpen(false);
+      console.log("Product created successfully", newProduct);
+    } catch (err) {
+      console.error("Failed to create product:", err);
+      throw err; // Re-throw for modal to handle
+    }
+  };
+
+  const handleEdit = (product: Product) => {
+    setProductToEdit(product);
+    setEditModalOpen(true);
+  };
+
+  const handleDelete = async (productId: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
+    if (!confirmed) return;
+
+    try {
+      await deleteProduct(productId);
+
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== productId)
+      );
+
+      setSelected((prevSelected) =>
+        prevSelected.filter((id) => id !== productId)
+      );
+
+      console.log(`Product ${productId} deleted successfully`);
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+    }
+  };
+  const handleDeleteSelected = async () => {
+    if (selected.length === 0) return;
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${selected.length} selected product(s)?`
+    );
+    if (!confirmed) return;
+
+    try {
+      // Delete all selected products
+      await Promise.all(selected.map((id) => deleteProduct(id)));
+
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => !selected.includes(product.id))
+      );
+
+      setSelected([]);
+      console.log(`${selected.length} products deleted successfully`);
+    } catch (err) {
+      console.error("Failed to delete selected products:", err);
+    }
+  };
+
+  const handleSaveEdit = async (editedProduct: Product) => {
+    try {
+      const productForm: ProductForm = {
+        name: editedProduct.name,
+        price: editedProduct.price,
+        stock: editedProduct.stock,
+        category: editedProduct.category,
+        expirationDate: editedProduct.expirationDate,
+      };
+
+      const updatedProduct = await updateProduct(editedProduct.id, productForm);
+
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.id === editedProduct.id ? updatedProduct : product
+        )
+      );
+      setEditModalOpen(false);
+      setProductToEdit(null);
+      console.log("Product updated successfully:", updatedProduct);
+    } catch (err) {
+      console.error("Failed to update product:", err);
+      throw err;
+    }
+  };
+  const handleOpenCreateModal = () => {
+    setCreateModalOpen(true);
+  };
+
+  const handleCloseCreateModal = () => {
+    setCreateModalOpen(false);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setProductToEdit(null);
+  };
+
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - products.length) : 0;
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - filteredProducts.length)
+      : 0;
 
   const visibleProducts = React.useMemo(
     () =>
-      [...products]
+      [...filteredProducts]
         .sort(getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage]
+    [filteredProducts, order, orderBy, page, rowsPerPage]
   );
 
   return {
+    //searching
+    products: filteredProducts,
+    searchTerm,
+
+    // Mui states
     order,
     orderBy,
     selected,
@@ -87,11 +233,27 @@ export default function useTableLogic() {
     rowsPerPage,
     emptyRows,
     visibleProducts,
+
+    editModalOpen,
+    createModalOpen,
+    productToEdit,
+
     handleRequestSort,
     handleSelectAllClick,
     handleClick,
     handleChangePage,
     handleChangeRowsPerPage,
     handleChangeDense,
+    handleSearch,
+
+    handleCreate,
+    handleEdit,
+    handleSaveEdit,
+    handleDelete,
+    handleDeleteSelected,
+    handleOpenCreateModal,
+    handleCloseCreateModal,
+    handleCloseEditModal,
+    loadProducts,
   };
 }

@@ -8,12 +8,10 @@ import EnhancedTableBody from "./ProductList/TableBody";
 import EnhancedTablePagination from "./ProductList/Pagination";
 import EnhancedTableToolbar from "./ProductList/Toolbar";
 import DensePaddingControl from "./ProductList/DensePadding";
-import { mockProducts } from "./ProductList/tableConfig";
 
 export default function ProductList() {
-  const products = mockProducts;
-
   const {
+    products,
     order,
     orderBy,
     selected,
@@ -28,12 +26,22 @@ export default function ProductList() {
     handleChangePage,
     handleChangeRowsPerPage,
     handleChangeDense,
+    handleEdit,
+    handleDelete,
+    handleDeleteSelected,
+    handleSearch,
+    searchTerm,
   } = useTableLogic();
 
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          onDeleteSelected={handleDeleteSelected}
+          onSearch={handleSearch}
+          searchTerm={searchTerm}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -54,6 +62,8 @@ export default function ProductList() {
               onRowClick={handleClick}
               emptyRows={emptyRows}
               dense={dense}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           </Table>
         </TableContainer>

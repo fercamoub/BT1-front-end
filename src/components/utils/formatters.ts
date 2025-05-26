@@ -2,9 +2,29 @@ function formatPrice(price: number): string {
   return `$${price.toFixed(2)}`;
 }
 
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString();
+function formatDate(date: string | Date): string {
+  if (!date) return "N/A";
+
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+
+  if (isNaN(dateObj.getTime())) {
+    return "Invalid Date";
+  }
+
+  return dateObj.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
 
-export { formatPrice, formatDate };
+function formatStock(stock: number): string {
+  if (stock <= 0) {
+    return "Out of Stock";
+  } else if (stock < 10) {
+    return `${stock} (Low Stock)`;
+  }
+  return stock.toString();
+}
+
+export { formatPrice, formatDate, formatStock };

@@ -1,5 +1,7 @@
+import React from "react";
 import type { Product } from "../../types";
-import { TableRow, TableCell, Checkbox } from "@mui/material";
+import { TableRow, TableCell, Checkbox, IconButton, Box } from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
 import { formatPrice, formatDate } from "../utils/formatters";
 
 interface TableRowProps {
@@ -7,6 +9,8 @@ interface TableRowProps {
   index: number;
   isItemSelected: boolean;
   onRowClick: (event: React.MouseEvent<unknown>, id: number) => void;
+  onEdit: (product: Product) => void;
+  onDelete: (productId: number) => void;
 }
 
 export default function EnhancedTableRow({
@@ -14,8 +18,20 @@ export default function EnhancedTableRow({
   index,
   isItemSelected,
   onRowClick,
+  onEdit,
+  onDelete,
 }: TableRowProps) {
   const labelId = `enhanced-table-checkbox-${index}`;
+
+  const handleEditClick = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent row selection
+    onEdit(product);
+  };
+
+  const handleDeleteClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    onDelete(product.id);
+  };
 
   return (
     <TableRow
@@ -37,13 +53,33 @@ export default function EnhancedTableRow({
           }}
         />
       </TableCell>
+      <TableCell align="left">{product.category}</TableCell>
       <TableCell component="th" id={labelId} scope="row" padding="none">
         {product.name}
       </TableCell>
       <TableCell align="right">{formatPrice(product.price)}</TableCell>
-      <TableCell align="right">{product.stock}</TableCell>
-      <TableCell align="left">{product.category}</TableCell>
       <TableCell align="left">{formatDate(product.expirationDate)}</TableCell>
+      <TableCell align="right">{product.stock}</TableCell>
+      <TableCell align="right">
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <IconButton
+            size="small"
+            onClick={handleEditClick}
+            color="primary"
+            title="Edit product"
+          >
+            <Edit fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={handleDeleteClick}
+            color="error"
+            title="Delete product"
+          >
+            <Delete fontSize="small" />
+          </IconButton>
+        </Box>
+      </TableCell>
     </TableRow>
   );
 }

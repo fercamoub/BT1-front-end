@@ -1,37 +1,85 @@
-//This component is a search component that allows to filter the product list by name, description, and category.
+import React, { useState } from "react";
 
-export default function Search() {
+interface SearchProps {
+  onSearch: (
+    searchTerm: string,
+    category: string,
+    availability: string
+  ) => void;
+  searchTerm: string;
+}
+
+export default function Search({ onSearch, searchTerm }: SearchProps) {
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedAvailability, setSelectedAvailability] = useState("");
+
+  const handleSearch = () => {
+    onSearch(localSearchTerm, selectedCategory, selectedAvailability);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const handleClear = () => {
+    setLocalSearchTerm("");
+    setSelectedCategory("");
+    setSelectedAvailability("");
+    onSearch("", "", "");
+  };
+
   return (
-    <div className="p-4  rounded-lg flex grid gap-4 bg-gray-200 shadow-md">
+    <div className="p-4 rounded-lg flex grid gap-4 bg-gray-200 shadow-md">
       <input
         type="text"
-        placeholder="Search..."
-        className="border border-gray-300 rounded-lg py-2 px-4 w-1/2"
+        placeholder="Search by name or category..."
+        value={localSearchTerm}
+        onChange={(e) => setLocalSearchTerm(e.target.value)}
+        onKeyPress={handleKeyPress}
+        className="border border-gray-300 rounded-lg py-2 px-4 w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <label htmlFor="Category">
         <select
           id="Category"
-          className="border border-gray-300 rounded-lg py-2 px-4 w-1/3 ml-2"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="border border-gray-300 rounded-lg py-2 px-4 w-1/3 ml-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All Categories</option>
-          <option value="category1">Category 1</option>
-          <option value="category2">Category 2</option>
-          <option value="category3">Category 3</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Food">Food</option>
+          <option value="Clothing">Clothing</option>
+          <option value="Books">Books</option>
+          <option value="Home">Home</option>
         </select>
       </label>
       <div>
         <label htmlFor="Availability">
           <select
             id="Availability"
-            className="border border-gray-300 rounded-lg py-2 px-4 w-1/3 ml-2"
+            value={selectedAvailability}
+            onChange={(e) => setSelectedAvailability(e.target.value)}
+            className="border border-gray-300 rounded-lg py-2 px-4 w-1/3 ml-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Availability</option>
-            <option value="available">Available</option>
+            <option value="available">Available </option>
             <option value="out-of-stock">Out of Stock</option>
           </select>
         </label>
-        <button className="bg-blue-500 text-white font-medium py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ml-2">
+        <button
+          onClick={handleSearch}
+          className="bg-blue-500 text-white font-medium py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ml-2 transition-colors"
+        >
           Search
+        </button>
+        <button
+          onClick={handleClear}
+          className="bg-gray-500 text-white font-medium py-2 px-4 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 ml-2 transition-colors"
+        >
+          Clear
         </button>
       </div>
     </div>

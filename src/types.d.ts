@@ -4,14 +4,15 @@ export interface Product {
   price: number;
   stock: number;
   category: string;
-  expirationDate: string;
+  expirationDate: Date;
+  actions?: React.ReactNode;
 }
 export interface ProductForm {
   name: string;
   price: number;
   stock: number;
   category: string;
-  expirationDate: string;
+  expirationDate: Date;
 }
 export type Order = "asc" | "desc";
 
@@ -32,4 +33,16 @@ export interface EnhancedTableProps {
   order: Order;
   orderBy: string;
   rowCount: number;
+}
+
+export interface EditModalProps {
+  open: boolean;
+  product: Product | null;
+  onClose: () => void;
+  onSave: (product: Product) => void;
+}
+
+export interface ActionHandlers {
+  onEdit: (product: Product) => void;
+  onDelete: (productId: number) => void;
 }

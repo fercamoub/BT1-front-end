@@ -9,6 +9,8 @@ interface TableBodyProps {
   onRowClick: (event: React.MouseEvent<unknown>, id: number) => void;
   emptyRows: number;
   dense: boolean;
+  onEdit: (product: Product) => void;
+  onDelete: (productId: number) => void;
 }
 
 export default function EnhancedTableBody({
@@ -17,6 +19,8 @@ export default function EnhancedTableBody({
   onRowClick,
   emptyRows,
   dense,
+  onEdit,
+  onDelete,
 }: TableBodyProps) {
   return (
     <TableBody>
@@ -30,6 +34,8 @@ export default function EnhancedTableBody({
             index={index}
             isItemSelected={isItemSelected}
             onRowClick={onRowClick}
+            onEdit={onEdit}
+            onDelete={onDelete}
           />
         );
       })}
@@ -39,7 +45,7 @@ export default function EnhancedTableBody({
             height: (dense ? 33 : 53) * emptyRows,
           }}
         >
-          <TableCell colSpan={6} />
+          <TableCell colSpan={7} />
         </TableRow>
       )}
     </TableBody>
