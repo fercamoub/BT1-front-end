@@ -9,8 +9,12 @@ import {
 import { getComparator } from "../components/ProductList/tableConfig";
 
 export default function useTableLogic() {
+  //search hooks
   const [products, setProducts] = React.useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [selectedCategory, setSelectedCategory] = React.useState("");
+  const [selectedAvailability, setSelectedAvailability] = React.useState("");
+
   //MUI Default hooks
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Product>("name");
@@ -25,7 +29,7 @@ export default function useTableLogic() {
     null
   );
 
-  //API implementation
+  //get products on mount
   React.useEffect(() => {
     loadProducts();
   }, []);
@@ -40,12 +44,23 @@ export default function useTableLogic() {
 
   // Search functionality
   const filteredProducts = React.useMemo(() => {
-    return products.filter(
-      (product) =>
+    return products.filter((product) => {
+      const matchesSearchTerm =
+        searchTerm === "" ||
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [products, searchTerm]);
+        product.category.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesCategory =
+        selectedCategory === "" || product.category === selectedCategory;
+
+      const matchesAvailability =
+        selectedAvailability === "" ||
+        (selectedAvailability === "available" && product.stock > 0) ||
+        (selectedAvailability === "out-of-stock" && product.stock === 0);
+
+      return matchesSearchTerm && matchesCategory && matchesAvailability;
+    });
+  }, [products, searchTerm, selectedCategory, selectedAvailability]);
 
   // MUI sorting and pagination logic
   const handleRequestSort = (
@@ -100,10 +115,15 @@ export default function useTableLogic() {
     setDense(event.target.checked);
   };
 
-  // Search handler
-  const handleSearch = (term: string) => {
+  const handleSearch = (
+    term: string,
+    category: string = "",
+    availability: string = ""
+  ) => {
     setSearchTerm(term);
-    setPage(0); // Reset to first page when searching
+    setSelectedCategory(category);
+    setSelectedAvailability(availability);
+    setPage(0);
   };
 
   //Modal handlers
@@ -238,6 +258,7 @@ export default function useTableLogic() {
     createModalOpen,
     productToEdit,
 
+    //MUI handlers
     handleRequestSort,
     handleSelectAllClick,
     handleClick,
@@ -246,6 +267,7 @@ export default function useTableLogic() {
     handleChangeDense,
     handleSearch,
 
+    //Modal handlers
     handleCreate,
     handleEdit,
     handleSaveEdit,

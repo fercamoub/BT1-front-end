@@ -2,14 +2,17 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
-import useTableLogic from "../hooks/TableHooks";
 import EnhancedTableHead from "./ProductList/TableHeader";
 import EnhancedTableBody from "./ProductList/TableBody";
 import EnhancedTablePagination from "./ProductList/Pagination";
 import EnhancedTableToolbar from "./ProductList/Toolbar";
 import DensePaddingControl from "./ProductList/DensePadding";
 
-export default function ProductList() {
+interface ProductListProps {
+  tableLogic: ReturnType<typeof import("../hooks/TableHooks").default>;
+}
+
+export default function ProductList({ tableLogic }: ProductListProps) {
   const {
     products,
     order,
@@ -31,7 +34,7 @@ export default function ProductList() {
     handleDeleteSelected,
     handleSearch,
     searchTerm,
-  } = useTableLogic();
+  } = tableLogic;
 
   return (
     <Box sx={{ width: "100%" }}>

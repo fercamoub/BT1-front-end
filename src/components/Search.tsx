@@ -32,7 +32,7 @@ export default function Search({ onSearch, searchTerm }: SearchProps) {
   };
 
   return (
-    <div className="p-4 rounded-lg flex grid gap-4 bg-gray-200 shadow-md">
+    <div className="p-4 rounded-lg flex grid gap-4 bg-white shadow-md">
       <input
         type="text"
         placeholder="Search by name or category..."

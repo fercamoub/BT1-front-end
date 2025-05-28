@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import type { ProductForm } from "../types";
-import { formatDate } from "./utils/formatters";
 
 interface NewProductModalProps {
   visible: boolean;
@@ -27,10 +26,18 @@ const NewProductModal: React.FC<NewProductModalProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "price" || name === "stock" ? Number(value) : value,
-    }));
+
+    if (name === "expirationDate") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: new Date(value),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: name === "price" || name === "stock" ? Number(value) : value,
+      }));
+    }
   };
 
   const validateForm = (): boolean => {
@@ -74,7 +81,16 @@ const NewProductModal: React.FC<NewProductModalProps> = ({
     try {
       setLoading(true);
       setError("");
-      await onCreate(formData);
+
+      // Create a clean product form with properly formatted data
+      const productToCreate: ProductForm = {
+        ...formData,
+        price: Number(formData.price),
+        stock: Number(formData.stock),
+        expirationDate: new Date(formData.expirationDate),
+      };
+
+      await onCreate(productToCreate);
 
       setFormData({
         name: "",
@@ -105,6 +121,13 @@ const NewProductModal: React.FC<NewProductModalProps> = ({
   };
 
   if (!visible) return null;
+
+  const formatDateForInput = (date: Date): string => {
+    if (!date || !(date instanceof Date)) {
+      return new Date().toISOString().split("T")[0];
+    }
+    return date.toISOString().split("T")[0];
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -191,11 +214,7 @@ const NewProductModal: React.FC<NewProductModalProps> = ({
             <input
               type="date"
               name="expirationDate"
-              value={
-                formData.expirationDate instanceof Date
-                  ? formData.expirationDate.toISOString().split("T")[0]
-                  : formData.expirationDate
-              }
+              value={formatDateForInput(formData.expirationDate)}
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}

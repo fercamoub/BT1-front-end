@@ -65,7 +65,7 @@ export default function EnhancedTableRow({
           <IconButton
             size="small"
             onClick={handleEditClick}
-            color="primary"
+            color="default"
             title="Edit product"
           >
             <Edit fontSize="small" />
@@ -73,7 +73,7 @@ export default function EnhancedTableRow({
           <IconButton
             size="small"
             onClick={handleDeleteClick}
-            color="error"
+            color="default"
             title="Delete product"
           >
             <Delete fontSize="small" />
