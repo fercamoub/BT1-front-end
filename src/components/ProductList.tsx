@@ -6,7 +6,6 @@ import EnhancedTableHead from "./ProductList/TableHeader";
 import EnhancedTableBody from "./ProductList/TableBody";
 import EnhancedTablePagination from "./ProductList/Pagination";
 import EnhancedTableToolbar from "./ProductList/Toolbar";
-import DensePaddingControl from "./ProductList/DensePadding";
 
 interface ProductListProps {
   tableLogic: ReturnType<typeof import("../hooks/TableHooks").default>;
@@ -28,10 +27,11 @@ export default function ProductList({ tableLogic }: ProductListProps) {
     handleClick,
     handleChangePage,
     handleChangeRowsPerPage,
-    handleChangeDense,
     handleEdit,
     handleDelete,
     handleDeleteSelected,
+    handleMarkOutOfStockSelected,
+    handleRefillSelected,
     handleSearch,
     searchTerm,
   } = tableLogic;
@@ -42,6 +42,8 @@ export default function ProductList({ tableLogic }: ProductListProps) {
         <EnhancedTableToolbar
           numSelected={selected.length}
           onDeleteSelected={handleDeleteSelected}
+          onMarkOutOfStockSelected={handleMarkOutOfStockSelected}
+          onRefillSelected={handleRefillSelected}
           onSearch={handleSearch}
           searchTerm={searchTerm}
         />
@@ -78,7 +80,6 @@ export default function ProductList({ tableLogic }: ProductListProps) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <DensePaddingControl dense={dense} onDenseChange={handleChangeDense} />
     </Box>
   );
 }

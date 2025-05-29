@@ -2,7 +2,12 @@ import React from "react";
 import type { Product } from "../../types";
 import { TableRow, TableCell, Checkbox, IconButton, Box } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { formatPrice, formatDate } from "../utils/formatters";
+import {
+  formatPrice,
+  formatDate,
+  getExpirationStatus,
+  getStockStatus,
+} from "../utils/formatters";
 
 interface TableRowProps {
   product: Product;
@@ -33,6 +38,37 @@ export default function EnhancedTableRow({
     onDelete(product.id);
   };
 
+  const getRowBackgroundColor = () => {
+    const expirationStatus = getExpirationStatus(product.expirationDate);
+    switch (expirationStatus) {
+      case "week":
+        return "#ffebee"; // Light red
+      case "twoWeeks":
+        return "#fff8e1"; // Light yellow
+      case "good":
+        return "#e8f5e8"; // Light green
+      case "none":
+      default:
+        return "transparent";
+    }
+  };
+
+  const getStockCellColor = () => {
+    const stockStatus = getStockStatus(product.stock);
+    switch (stockStatus) {
+      case "medium":
+        return "#fff3e0";
+      case "low":
+        return "#ffebee";
+      case "out":
+      case "good":
+      default:
+        return "transparent";
+    }
+  };
+
+  const isOutOfStock = product.stock === 0;
+
   return (
     <TableRow
       hover
@@ -42,7 +78,14 @@ export default function EnhancedTableRow({
       tabIndex={-1}
       key={product.id}
       selected={isItemSelected}
-      sx={{ cursor: "pointer" }}
+      sx={{
+        cursor: "pointer",
+        backgroundColor: getRowBackgroundColor(),
+        "&:hover": {
+          backgroundColor: (theme) =>
+            theme.palette.action.hover + " !important",
+        },
+      }}
     >
       <TableCell padding="checkbox">
         <Checkbox
@@ -53,13 +96,56 @@ export default function EnhancedTableRow({
           }}
         />
       </TableCell>
-      <TableCell align="left">{product.category}</TableCell>
-      <TableCell component="th" id={labelId} scope="row" padding="none">
+      <TableCell
+        align="left"
+        sx={{
+          textDecoration: isOutOfStock ? "line-through" : "none",
+          color: isOutOfStock ? "text.disabled" : "text.primary",
+        }}
+      >
+        {product.category}
+      </TableCell>
+      <TableCell
+        component="th"
+        id={labelId}
+        scope="row"
+        padding="none"
+        sx={{
+          textDecoration: isOutOfStock ? "line-through" : "none",
+          color: isOutOfStock ? "text.disabled" : "text.primary",
+        }}
+      >
         {product.name}
       </TableCell>
-      <TableCell align="right">{formatPrice(product.price)}</TableCell>
-      <TableCell align="left">{formatDate(product.expirationDate)}</TableCell>
-      <TableCell align="right">{product.stock}</TableCell>
+      <TableCell
+        align="right"
+        sx={{
+          textDecoration: isOutOfStock ? "line-through" : "none",
+          color: isOutOfStock ? "text.disabled" : "text.primary",
+        }}
+      >
+        {formatPrice(product.price)}
+      </TableCell>
+      <TableCell
+        align="left"
+        sx={{
+          textDecoration: isOutOfStock ? "line-through" : "none",
+          color: isOutOfStock ? "text.disabled" : "text.primary",
+        }}
+      >
+        {formatDate(product.expirationDate)}
+      </TableCell>
+      <TableCell
+        align="right"
+        sx={{
+          backgroundColor: getStockCellColor(),
+          textDecoration: isOutOfStock ? "line-through" : "none",
+          color: isOutOfStock ? "text.disabled" : "text.primary",
+          fontWeight: product.stock < 5 ? "bold" : "normal",
+        }}
+      >
+        {product.stock}
+      </TableCell>
       <TableCell align="right">
         <Box sx={{ display: "flex", gap: 1 }}>
           <IconButton

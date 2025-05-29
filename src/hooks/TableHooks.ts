@@ -5,6 +5,8 @@ import {
   deleteProduct,
   updateProduct,
   createProduct,
+  markOutOfStock,
+  restockProduct,
 } from "../api/products";
 import { getComparator } from "../components/ProductList/tableConfig";
 import { useCategories } from "./CategoriesHooks";
@@ -22,7 +24,7 @@ export default function useTableLogic() {
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   //Modal hooks
   const [editModalOpen, setEditModalOpen] = React.useState(false);
   const [createModalOpen, setCreateModalOpen] = React.useState(false);
@@ -176,6 +178,7 @@ export default function useTableLogic() {
       console.error("Failed to delete product:", error);
     }
   };
+
   const handleDeleteSelected = async () => {
     if (selected.length === 0) return;
     const confirmed = window.confirm(
@@ -195,6 +198,49 @@ export default function useTableLogic() {
       console.log(`${selected.length} products deleted successfully`);
     } catch (err) {
       console.error("Failed to delete selected products:", err);
+    }
+  };
+
+  // New bulk action handlers
+  const handleMarkOutOfStockSelected = async () => {
+    if (selected.length === 0) return;
+    const confirmed = window.confirm(
+      `Are you sure you want to mark ${selected.length} selected product(s) as out of stock?`
+    );
+    if (!confirmed) return;
+
+    try {
+      // Mark all selected products as out of stock
+      await Promise.all(selected.map((id) => markOutOfStock(id)));
+
+      // Reload products to reflect changes
+      await loadProducts();
+      setSelected([]);
+      console.log(
+        `${selected.length} products marked as out of stock successfully`
+      );
+    } catch (err) {
+      console.error("Failed to mark selected products as out of stock:", err);
+    }
+  };
+
+  const handleRefillSelected = async () => {
+    if (selected.length === 0) return;
+    const confirmed = window.confirm(
+      `Are you sure you want to refill ${selected.length} selected product(s)?`
+    );
+    if (!confirmed) return;
+
+    try {
+      // Refill all selected products
+      await Promise.all(selected.map((id) => restockProduct(id)));
+
+      // Reload products to reflect changes
+      await loadProducts();
+      setSelected([]);
+      console.log(`${selected.length} products refilled successfully`);
+    } catch (err) {
+      console.error("Failed to refill selected products:", err);
     }
   };
 
@@ -286,6 +332,8 @@ export default function useTableLogic() {
     handleSaveEdit,
     handleDelete,
     handleDeleteSelected,
+    handleMarkOutOfStockSelected,
+    handleRefillSelected,
     handleOpenCreateModal,
     handleCloseCreateModal,
     handleCloseEditModal,
