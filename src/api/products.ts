@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Product, ProductForm } from "../types";
+import type { Product, ProductForm, OverviewData } from "../types";
 
 const api = "http://localhost:9090/api/products";
 
@@ -23,5 +23,9 @@ export const deleteProduct = async (id: number): Promise<void> => {
 };
 export const fetchProductById = async (id: number): Promise<Product> => {
   const response = await axios.get<Product>(`${api}/${id}`);
+  return response.data;
+};
+export const fetchOverview = async (): Promise<OverviewData[]> => {
+  const response = await axios.get<OverviewData[]>(`${api}/overview`);
   return response.data;
 };

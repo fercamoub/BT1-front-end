@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import loadCategories from "../hooks/TableHooks";
 
 interface SearchProps {
   onSearch: (
@@ -13,6 +14,12 @@ export default function Search({ onSearch, searchTerm }: SearchProps) {
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAvailability, setSelectedAvailability] = useState("");
+  const tableHooks = loadCategories();
+  const categories = tableHooks.products
+    ? Array.from(
+        new Set(tableHooks.products.map((product: any) => product.category))
+      )
+    : [];
 
   const handleSearch = () => {
     onSearch(localSearchTerm, selectedCategory, selectedAvailability);
@@ -49,11 +56,11 @@ export default function Search({ onSearch, searchTerm }: SearchProps) {
           className="border border-gray-300 rounded-lg py-2 px-4 w-1/3 ml-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All Categories</option>
-          <option value="Electronics">Electronics</option>
-          <option value="Food">Food</option>
-          <option value="Clothing">Clothing</option>
-          <option value="Books">Books</option>
-          <option value="Home">Home</option>
+          {categories.map((category: string) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
         </select>
       </label>
       <div>

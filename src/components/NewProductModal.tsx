@@ -22,9 +22,7 @@ const NewProductModal: React.FC<NewProductModalProps> = ({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     if (name === "expirationDate") {
@@ -87,6 +85,7 @@ const NewProductModal: React.FC<NewProductModalProps> = ({
         ...formData,
         price: Number(formData.price),
         stock: Number(formData.stock),
+        category: formData.category.trim(),
         expirationDate: new Date(formData.expirationDate),
       };
 
@@ -158,20 +157,18 @@ const NewProductModal: React.FC<NewProductModalProps> = ({
 
           <div>
             <label className="block text-sm font-medium mb-1">Category *</label>
-            <select
+            <input
+              type="text"
               name="category"
               value={formData.category}
               onChange={handleInputChange}
+              placeholder="Enter product category"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
-            >
-              <option value="">Select a category</option>
-              <option value="Electronics">Electronics</option>
-              <option value="Food">Food</option>
-              <option value="Clothing">Clothing</option>
-              <option value="Books">Books</option>
-              <option value="Home">Home</option>
-            </select>
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Enter any category (e.g., Congelados, Bebidas, Lácteos, etc.)
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

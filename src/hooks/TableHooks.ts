@@ -7,6 +7,7 @@ import {
   createProduct,
 } from "../api/products";
 import { getComparator } from "../components/ProductList/tableConfig";
+import { useCategories } from "./CategoriesHooks";
 
 export default function useTableLogic() {
   //search hooks
@@ -28,6 +29,13 @@ export default function useTableLogic() {
   const [productToEdit, setProductToEdit] = React.useState<Product | null>(
     null
   );
+
+  //get categories on mount
+  const { loadCategories } = useCategories();
+
+  React.useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
 
   //get products on mount
   React.useEffect(() => {
@@ -133,6 +141,8 @@ export default function useTableLogic() {
       setProducts((prevProducts) => [...prevProducts, newProduct]);
       setCreateModalOpen(false);
       console.log("Product created successfully", newProduct);
+      loadProducts();
+      loadCategories();
     } catch (err) {
       console.error("Failed to create product:", err);
       throw err; // Re-throw for modal to handle
@@ -208,6 +218,8 @@ export default function useTableLogic() {
       setEditModalOpen(false);
       setProductToEdit(null);
       console.log("Product updated successfully:", updatedProduct);
+      loadProducts();
+      loadCategories();
     } catch (err) {
       console.error("Failed to update product:", err);
       throw err;
@@ -243,6 +255,7 @@ export default function useTableLogic() {
     //searching
     products: filteredProducts,
     searchTerm,
+    loadCategories,
 
     // Mui states
     order,

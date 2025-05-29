@@ -1,4 +1,5 @@
 import NewProductModal from "./components/NewProductModal";
+import EditProductModal from "./components/EditProductModal";
 import ProductList from "./components/ProductList";
 import ProductStats from "./components/ProductStats";
 import Search from "./components/Search";
@@ -9,7 +10,7 @@ function App() {
 
   return (
     <>
-      <div className="flex flex-col w-3/4 min-h-screen mx-auto mt-10 bg-gray-100 gap-4 p-4">
+      <div className="flex flex-col w-3/4 min-h-screen mx-auto mt-10 bg-gray-100 gap-4 p-4 border border-gray-100 rounded-lg shadow-md">
         <div>
           <Search
             onSearch={(
@@ -33,13 +34,22 @@ function App() {
         <div>
           <ProductList tableLogic={tableLogic} />
         </div>
-        <div></div>
+        <div>
+          <ProductStats />
+        </div>
       </div>
 
       <NewProductModal
         visible={tableLogic.createModalOpen}
         onClose={tableLogic.handleCloseCreateModal}
         onCreate={tableLogic.handleCreate}
+      />
+
+      <EditProductModal
+        visible={tableLogic.editModalOpen}
+        product={tableLogic.productToEdit}
+        onClose={tableLogic.handleCloseEditModal}
+        onSave={tableLogic.handleSaveEdit}
       />
     </>
   );

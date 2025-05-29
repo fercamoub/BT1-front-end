@@ -26,5 +26,11 @@ function formatStock(stock: number): string {
   }
   return stock.toString();
 }
+const formatCurrency = (value: number) =>
+  value.toLocaleString("en-US", { style: "currency", currency: "USD" });
 
-export { formatPrice, formatDate, formatStock };
+function formatNumber(value: number): string {
+  return value.toLocaleString();
+}
+
+export { formatPrice, formatDate, formatStock, formatCurrency, formatNumber };
