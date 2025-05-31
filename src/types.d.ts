@@ -4,7 +4,7 @@ export interface Product {
   price: number;
   stock: number;
   category: string;
-  expirationDate: Date;
+  expirationDate: Date | null;
   actions?: React.ReactNode;
 }
 export interface ProductForm {
@@ -12,7 +12,7 @@ export interface ProductForm {
   price: number;
   stock: number;
   category: string;
-  expirationDate: Date;
+  expirationDate: Date | null;
 }
 export type Order = "asc" | "desc";
 

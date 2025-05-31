@@ -8,20 +8,12 @@ export default function ProductStats() {
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto">
-          <thead className="bg-gray-50">
+          <thead>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Category
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total Stock
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total Value
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Average Price
-              </th>
+              <th className="px-6 text-left ">Category</th>
+              <th className="px-6 text-left">Total Stock</th>
+              <th className="px-6 text-left">Total Value</th>
+              <th className="px-6 text-left">Average Price</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -42,6 +34,30 @@ export default function ProductStats() {
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td className="px-6 py-4 font-bold text-gray-900">Overall</td>
+              <td className="px-6 py-4 font-bold text-gray-900">
+                {formatNumber(
+                  overviewData.reduce((acc, stat) => acc + stat.totalStock, 0)
+                )}
+              </td>
+              <td className="px-6 py-4 font-bold text-gray-900">
+                {formatCurrency(
+                  overviewData.reduce((acc, stat) => acc + stat.totalValue, 0)
+                )}
+              </td>
+              <td className="px-6 py-4 font-bold text-gray-900">
+                {formatCurrency(
+                  overviewData.reduce(
+                    (acc, stat) => acc + stat.averagePrice * stat.totalStock,
+                    0
+                  ) /
+                    overviewData.reduce((acc, stat) => acc + stat.totalStock, 0)
+                )}
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
 

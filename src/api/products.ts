@@ -29,3 +29,11 @@ export const fetchOverview = async (): Promise<OverviewData[]> => {
   const response = await axios.get<OverviewData[]>(`${api}/overview`);
   return response.data;
 };
+export const markOutOfStock = async (id: number): Promise<Product> => {
+  const response = await axios.put<Product>(`${api}/${id}/outstock`);
+  return response.data;
+};
+export const restockProduct = async (id: number): Promise<Product> => {
+  const response = await axios.put<Product>(`${api}/${id}/instock`);
+  return response.data;
+};
