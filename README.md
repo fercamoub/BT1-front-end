@@ -4,7 +4,7 @@
 
 - Modern UI built with React
 - Responsive design for all devices
-- Integration with the DestroyableToy back-end API
+- Integration with the BreakableToy back-end API
 
 ## Getting Started
 
@@ -16,7 +16,7 @@
 ### Installation
 
 ```bash
-git clone https://github.com/your-username/DestroyableToy-front-end.git
+git clone hhttps://github.com/fercamoub/BT1-front-end
 cd BT1-front-end
 npm install
 ```
@@ -24,5 +24,5 @@ npm install
 ### Running the App
 
 ```bash
-npm start
+npm run start
 ```
